@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plots</title>
+<meta name="description" content="Interactive welfare and equilibrium plots.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232457c5'/%3E%3Cpath d='M5 12C12 26 18 24 27 7' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E">
+<!-- Model source: referee/v3/draft/draft_v2_no_boxes.pdf (2026-08-22),
+     sections 1.4–1.8; Strategic_Subscription (6).pdf (2026-09-20), slides 13–22.
+     Baseline parameters follow the paper's original plotting script. -->
+<style>
+:root{--ink:#1b293f;--muted:#687386;--border:#e2e7ee;--blue:#2457c5;--green:#087d78;--red:#bf4147;--n:#eff1f5;--m:#fff0d9;--f:#e3ecfc;--j:#e0f2ec}
+*{box-sizing:border-box}body{margin:0;background:#fff;color:var(--ink);font:16px/1.5 "Segoe UI","Microsoft YaHei",sans-serif}button,input,select{font:inherit}button,summary,select{cursor:pointer}button,input,select{touch-action:manipulation}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,svg:focus-visible{outline:3px solid #8daef0;outline-offset:3px}[hidden]{display:none!important}
+main{max-width:1480px;margin:auto;padding:24px 32px 32px}.math{font-family:Georgia,"Times New Roman",serif;font-style:italic}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:38px;padding:0 0 13px}.control-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.control-head label{font-size:14px}.control-head label .math{font-size:20px;margin-right:8px}.numeric{width:103px;border:1px solid var(--border);border-radius:5px;background:#fbfcfe;text-align:right;padding:4px 7px;font-size:15px;font-variant-numeric:tabular-nums;color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--blue);cursor:ew-resize;margin:13px 0 2px;height:16px}.cost-actions{display:flex;align-items:center;gap:9px}.text-button{border:1px solid var(--border);background:white;border-radius:5px;padding:4px 9px;font-size:13px;color:var(--muted)}.text-button:hover{border-color:#a8b9d0;color:var(--ink)}
+.options{display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:9px 0 16px;border-bottom:1px solid var(--border);font-size:13px;color:var(--muted)}.check{display:flex;align-items:center;gap:6px;cursor:pointer}.check input{width:15px;height:15px;accent-color:var(--blue);margin:0}.options details{margin-left:auto;position:relative}.options summary{font-size:13px;user-select:none}.extra{position:absolute;right:0;top:27px;z-index:10;width:330px;background:white;border:1px solid var(--border);border-radius:7px;padding:19px;box-shadow:0 8px 24px #18293c0e}.extra .control+.control{margin-top:13px}.extra label{font-size:14px}.extra select{width:100%;margin-top:10px;border:1px solid var(--border);border-radius:5px;background:white;padding:7px;color:var(--ink);font-size:13px}.error{color:var(--red);font-size:13px}.error:empty{display:none}
+.figures{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:21px}.figure{min-width:0}.legend{display:flex;gap:15px;align-items:center;flex-wrap:wrap;min-height:25px;color:var(--muted);font-size:13px}.legend span{display:inline-flex;align-items:center;gap:6px}.line-key{width:22px;height:0;border-top:2.5px solid var(--blue);display:inline-block}.line-key.gray{border-top:1px dotted #8e98a8}.line-key.dark{border-color:var(--ink)}.line-key.green{border-top:2px dashed var(--green)}.candidate-legend{margin-bottom:3px}.candidate-legend .line-key{width:19px}
+.chart-wrap{position:relative}.chart{display:block;width:100%;height:330px;overflow:visible;touch-action:pan-y}.chart text{font-family:"Segoe UI","Microsoft YaHei",sans-serif;fill:var(--muted);font-size:12px}.chart .symbol{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:14px}.chart path,.chart line,.chart circle,.chart polygon{vector-effect:non-scaling-stroke}.nodes{display:flex;align-items:center;flex-wrap:wrap;gap:6px 15px;min-height:35px;margin:6px 0 0;padding-left:4px}.node-button{display:inline-flex;align-items:center;gap:5px;color:var(--muted);font-size:12px;background:transparent;border:0;padding:3px 0;line-height:1.5}.node-button:hover{color:var(--blue)}.node-button .symbol{font-size:14px;color:var(--ink);font-family:Georgia,"Times New Roman",serif}.node-icon{font-size:15px;line-height:1}.minimum{color:var(--red)!important}
+.figure{display:flex;flex-direction:column}
+.phase-figure{margin-top:24px;padding-top:19px;border-top:1px solid var(--border)}.region-legend{gap:18px}.region-legend i{display:inline-block;width:11px;height:11px;border:1px solid #0000000a;border-radius:1px}.map{height:270px}.phase-header{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:5px}.tooltip{position:absolute;pointer-events:none;z-index:5;background:#1b293f;color:white;padding:7px 10px;border-radius:5px;font-size:12px;max-width:280px;box-shadow:0 3px 13px #18293c18}.tooltip strong{font-weight:600}noscript{display:block;padding:20px}
+@media(min-width:1500px){.chart{height:360px}.map{height:290px}}
+@media(max-width:1050px){main{padding:22px}.figures{grid-template-columns:1fr;gap:26px}.chart{height:325px}.map{height:260px}}
+@media(max-width:600px){main{padding:18px 14px}.controls{grid-template-columns:1fr;gap:19px}.control-head label{font-size:13px}.control-head label .math{font-size:19px}.options{gap:12px 16px}.options details{margin-left:0}.extra{left:0;right:auto;width:min(330px,calc(100vw - 30px))}.options details:last-child{position:static}.options{position:relative}.extra{top:100%}.legend{font-size:12px;gap:9px 13px}.chart{height:315px}.map{height:280px}.nodes{gap:5px 12px}.phase-header{gap:9px}.region-legend{gap:8px 12px}.phase-figure{margin-top:22px}}
+@media print{.controls,.options{display:none}main{padding:0}.figure,.phase-figure{break-inside:avoid}}
+.plot-controls.controls{grid-template-columns:1fr 1fr;gap:18px;width:100%;padding:0;margin-bottom:13px;flex:0 0 auto}.plot-controls .control-head{gap:6px}.plot-controls .control-head label .math{margin-right:0;font-size:18px}.plot-controls .numeric{width:78px;padding:3px 5px;font-size:14px}.plot-controls .cost-actions{gap:4px}.plot-controls .text-button{width:26px;padding:3px 0;font-size:13px}.plot-controls input[type=range]{margin-top:10px}
+@media(max-width:600px){.plot-controls.controls{gap:14px}}
+@media(max-width:360px){.plot-controls.controls{grid-template-columns:1fr;gap:12px}}
+</style>
+</head>
+<body>
+<noscript>Enable JavaScript to use the interactive diagrams.</noscript>
+<main>
+<section class="controls" aria-label="Parameters">
+<div class="control"><div class="control-head"><label for="bNumber"><span class="math">b</span>Preference productivity</label><input class="numeric" id="bNumber" type="number" min="0.02" max="2" step="any" value="0.49"></div><input id="bSlider" type="range" min="0.02" max="2" step="0.005" value="0.49" aria-label="Preference productivity b"></div>
+<div class="control"><div class="control-head"><label for="cNumber"><span class="math">c</span>Learning cost</label><div class="cost-actions"><button class="text-button" id="play" type="button">Play</button><button class="text-button" id="resetC" type="button">Reset c</button><input class="numeric" id="cNumber" type="number" min="1e-12" max="1000000" step="any" value="0.32"></div></div><input id="cSlider" type="range" min="0" max="1000" step="1" aria-label="Learning cost c, low to high"></div>
+</section>
+<div class="options"><label class="check"><input id="showPlanner" type="checkbox">Planner welfare</label><label class="check"><input id="showCandidates" type="checkbox">Candidate branches</label><span id="inputError" class="error" role="status"></span><details id="advanced"><summary>More parameters</summary><div class="extra"><div class="control"><div class="control-head"><label for="tauNumber" class="math">τ</label><input class="numeric" id="tauNumber" type="number" min="0.2" max="3" step="any" value="1"></div><input id="tauSlider" type="range" min="0.2" max="3" step="0.05" value="1" aria-label="Fundamental precision tau"></div><div class="control"><div class="control-head"><label for="muNumber" class="math">τμ</label><input class="numeric" id="muNumber" type="number" min="0.02" max="2" step="any" value="0.25"></div><input id="muSlider" type="range" min="0.02" max="2" step="0.01" value="0.25" aria-label="Preference prior precision tau mu"></div><label for="exampleSelect">Examples · τ = 1, τμ = 0.25</label><select id="exampleSelect"><option value="">Choose b</option><option value="1.21">b = 1.21</option><option value="0.49">b = 0.49</option><option value="0.29">b = 0.29</option><option value="0.16">b = 0.16</option><option value="knife">b = (β_0)² = 0.25</option></select></div></details></div>
+<div class="figures">
+<section class="figure" aria-label="Consumer welfare"><div class="chart-wrap"><svg id="welfareChart" class="chart" role="img" tabindex="0" aria-label="Consumer welfare as learning cost increases; drag or use left and right arrows to change c"></svg><div id="welfareTip" class="tooltip" hidden></div></div><div id="welfareNodes" class="nodes" aria-label="Welfare thresholds"></div></section>
+<section class="figure" aria-label="Equilibrium manipulation"><div class="chart-wrap"><svg id="betaChart" class="chart" role="img" tabindex="0" aria-label="Equilibrium manipulation as learning cost increases; drag or use left and right arrows to change c"></svg><div id="betaTip" class="tooltip" hidden></div></div><div id="betaNodes" class="nodes" aria-label="Equilibrium thresholds"></div><div id="candidateLegend" class="legend candidate-legend" hidden><span><i class="line-key" style="border-top:1.5px dashed #ad630f"></i>Only Preference</span><span><i class="line-key" style="border-top:1.5px dotted #4272ce"></i>Only Fundamental</span><span><i class="line-key" style="border-top:1.5px dashed #087d78"></i>Both (β = √b)</span></div></section>
+</div>
+<section class="phase-figure" aria-label="Equilibrium regions"><div class="phase-header"><div class="legend region-legend"><span><i style="background:var(--n)"></i>No Learning</span><span><i style="background:var(--f)"></i>Only Fundamental</span><span><i style="background:var(--m)"></i>Only Preference</span><span><i style="background:var(--j)"></i>Both</span></div></div><div class="chart-wrap"><svg id="phaseChart" class="chart map" role="img" tabindex="0" aria-label="Equilibrium regions in b and c; drag the point or use arrow keys to adjust parameters"></svg><div id="phaseTip" class="tooltip" hidden></div></div></section>
+</main>
+<script id="model">
+"use strict";
+const Model=(()=>{
+ const bisect=(fn,lo,hi)=>{let flo=fn(lo);for(let i=0;i<65;i++){const mid=(lo+hi)/2,fm=fn(mid);if(fm===0)return mid;if((fm>0)===(flo>0)){lo=mid;flo=fm}else hi=mid}return (lo+hi)/2};
+ function context(b,tau,mu){
+  const beta0=bisect(x=>tau*x**3+mu*x-mu,0,1),b0=beta0**2,D0=mu+b0*tau;
+  const betaW=bisect(x=>tau*x**4+mu*x-mu,0,1),cmu=b*b0/D0**2,ctheta=b0**2/D0**2;
+  const cw=b*((1-betaW)/(tau*betaW))**2,cm=b<1?(1-Math.sqrt(b))**2/tau**2:null,cf=b<1?b**3/mu**2:null;
+  const knife=Math.abs(b-b0)<2e-13,group=knife?'knife':b>=1?'high':b>b0?'middle':'low';
+  const activation=Math.max(cmu,ctheta),transition=group==='middle'?cm:group==='low'?cf:group==='knife'?activation:null;
+  const star=group==='high'?cw:group==='middle'?Math.max(cw,cm):null;
+  return {b,tau,mu,beta0,b0,D0,W0:-b0/D0,cmu,ctheta,cw,cm,cf,activation,transition,star,group,betaW,bw:betaW**2};
+ }
+ function finish(c,q,beta,kt,km,regime){
+  kt=Math.max(0,kt);km=Math.max(0,km);const D=q.mu+q.b*km+beta**2*(q.tau+kt),loss=beta**2/D;
+  const db=regime==='m'?-beta*(1-beta)/(2*c):regime==='f'?beta/(6*c):0;
+  const direct=kt+km,strategic=2*beta*(q.mu+q.b*km)/D**2*db;
+  return {beta,kt,km,regime,loss,W:-loss-c*(kt+km),dW:-direct-strategic,direct,strategic,db};
+ }
+ function equilibrium(c,q){
+  if(!(c>0))throw new RangeError('c must be positive');
+  if(c>=q.activation)return finish(c,q,q.beta0,0,0,'n');
+  if(q.group==='high'||(q.group==='middle'&&c>q.cm)){
+   const r=Math.sqrt(q.b/c),beta=r/(q.tau+r);return finish(c,q,beta,0,(r*beta**2-q.mu)/q.b,'m');
+  }
+  if(q.group==='low'&&c>q.cf){const beta=Math.cbrt(q.mu*Math.sqrt(c));return finish(c,q,beta,(1-beta)/Math.sqrt(c)-q.tau,0,'f')}
+  return finish(c,q,Math.sqrt(q.b),(1-Math.sqrt(q.b))/Math.sqrt(c)-q.tau,Math.sqrt(q.b/c)-q.mu/q.b,'j');
+ }
+ function planner(c,q){
+  const den=3-2*q.beta0,at=3*q.ctheta/den,am=q.cmu/den;
+  if(c>=Math.max(at,am))return finish(c,q,q.beta0,0,0,'n');
+  if(q.b<3){const be=Math.sqrt(q.b/3),s=Math.sqrt(3/((3-2*be)*c)),kt=(1-be)*s-q.tau,km=(be**3*s-q.mu)/q.b;
+   if(kt>=-1e-10&&km>=-1e-10)return finish(c,q,be,kt,km,'j');
+  }
+  if(am>at){const be=bisect(x=>q.b*(1-x)**2/(x*x*q.tau*q.tau*(3-2*x))-c,q.beta0,1),p=be**3*q.tau/(1-be);return finish(c,q,be,0,(p-q.mu)/q.b,'m')}
+  const be=bisect(x=>3*x**6/(q.mu*q.mu*(3-2*x))-c,0,q.beta0),t=q.mu*(1-be)/be**3;return finish(c,q,be,t-q.tau,0,'f');
+ }
+ return {bisect,context,equilibrium,planner};
+})();
+</script>
+
+<script id="interface">
+const $=id=>document.getElementById(id),clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+const palette={n:'#727e91',m:'#a66a1d',f:'#3564b7',j:'#177a64'},fills={n:'#eff1f5',m:'#fff0d9',f:'#e3ecfc',j:'#e0f2ec'};
+const names={n:'No Learning',m:'Only Preference',f:'Only Fundamental',j:'Both'};
+const state={b:.49,tau:1,mu:.25,c:.32,planner:false,candidates:false};
+let q,domain,samples,frame=0,dirty=true,playing=false,lastTime=0,playFraction=0;
+const plotClones=[];
+const fmt=(v,n=4)=>{if(!Number.isFinite(v))return '—';if(Math.abs(v)<1e-13)return '0';if(Math.abs(v)<.0001||Math.abs(v)>=10000)return v.toExponential(2);return Number(v.toFixed(n)).toString()};
+const near=(a,b)=>b!==null&&Math.abs(a-b)<=2e-10*Math.max(1e-9,Math.abs(b));
+function windowFor(z){const pa=Math.max(z.cmu,3*z.ctheta)/(3-2*z.beta0),small=z.transition!==null?z.transition:z.cw;return {hi:Math.max(z.activation,pa)*1.8,lo:Math.max(1e-12,Math.min(z.activation/7,small/4))}}
+const cAt=(u,d=domain)=>Math.exp(Math.log(d.lo)+u*Math.log(d.hi/d.lo));
+const fraction=(c,d=domain)=>Math.log(c/d.lo)/Math.log(d.hi/d.lo);
+function requestRender(full=false){dirty=dirty||full;if(!frame)frame=requestAnimationFrame(()=>{frame=0;render()})}
+function stopPlay(){playing=false;$('play').textContent='▶';$('play').setAttribute('aria-label','Play c increase');$('play').title='Play c increase';syncPlotControls()}
+function setParameters(values){Object.assign(state,values);$('inputError').textContent='';stopPlay();requestRender(true)}
+function regenerate(){q=Model.context(state.b,state.tau,state.mu);domain=windowFor(q);domain.hi=Math.max(domain.hi,state.c*1.001);domain.lo=Math.min(domain.lo,state.c/1.001);const cs=Array.from({length:321},(_,i)=>cAt(i/320));[q.activation,q.transition,q.star].filter(c=>c&&c>=domain.lo&&c<=domain.hi).forEach(c=>cs.push(c));cs.sort((a,b)=>a-b);samples=cs.map(c=>({c,d:Model.equilibrium(c,q),p:Model.planner(c,q)}))}
+function text(x,y,value,attrs=''){return '<text x="'+x+'" y="'+y+'" '+attrs+'>'+value+'</text>'}
+function line(x1,y1,x2,y2,color='#e8ebf0',extra=''){return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+color+'" '+extra+'/>'}
+function circle(x,y,r,fill,stroke){return '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="1.5"/>'}
+function path(points,x,y,key){return points.map((p,i)=>(i?'L':'M')+x(p.c).toFixed(2)+','+y(key(p)).toFixed(2)).join(' ')}
+function geometry(id){const r=$(id).getBoundingClientRect(),w=Math.max(270,r.width),h=r.height;return {w,h,l:70,r:14,t:64,pw:w-84,ph:h-93}}
+function thresholds(withMinimum=false){
+ const items=[{c:q.activation,symbol:q.group==='knife'?'c⁰':q.group==='low'?'cθ⁰':'cμ⁰',type:'activation',meaning:q.group==='knife'?'Both cutoff':'Learning cutoff'}];
+ if(q.transition!==null&&!near(q.transition,q.activation))items.push({c:q.transition,symbol:q.group==='middle'?'cᴹ':'cᶠ',type:'transition',meaning:'Both cutoff'});
+ if(withMinimum&&q.star){const same=items.find(v=>near(v.c,q.star));if(same){same.symbol+=' = c*';same.minimum=true;same.meaning='Both cutoff / Minimum'}else items.push({c:q.star,symbol:q.group==='high'?'cᵂ':'c*',type:'minimum',minimum:true,meaning:'Welfare minimum'})}
+ return items.sort((a,b)=>a.c-b.c);
+}
+function bands(g,x){
+ const cuts=thresholds().map(v=>v.c).filter(c=>c<domain.hi&&c>domain.lo),edges=[domain.lo,...cuts,domain.hi].sort((a,b)=>a-b);
+ let s='',labels=[];const font=g.w<400?12:13;
+ for(let i=0;i<edges.length-1;i++){const a=x(edges[i]),b=x(edges[i+1]),reg=Model.equilibrium(Math.sqrt(edges[i]*edges[i+1]),q).regime,anchor=(a+b)/2,width=names[reg].length*font*.53; s+='<rect x="'+a+'" y="'+g.t+'" width="'+Math.max(0,b-a)+'" height="'+g.ph+'" fill="'+fills[reg]+'"/>';labels.push({anchor,pos:anchor,width,reg})}
+ let right=g.l-7;for(const z of labels){z.pos=Math.max(z.anchor,right+7+z.width/2);right=z.pos+z.width/2}
+ let left=g.w-g.r+7;for(let i=labels.length-1;i>=0;i--){const z=labels[i];z.pos=Math.min(z.pos,left-7-z.width/2);left=z.pos-z.width/2}
+ for(const z of labels){if(Math.abs(z.pos-z.anchor)>5)s+=line(z.pos,26,z.anchor,34,palette[z.reg],'opacity=".5"');s+=text(z.pos,20,names[z.reg],'text-anchor="middle" style="fill:'+palette[z.reg]+';font-size:'+font+'px"')}
+ return s;
+}
+function axisX(g){return '<g class="x-axis">'+line(g.l,g.t+g.ph,g.w-g.r,g.t+g.ph,'#b9c2cf','stroke-width=".7"')+text(g.w-g.r,g.h-6,'c','class="symbol" text-anchor="end"')+'</g>'}
+function axisY(g,label,description){const cy=g.t+g.ph/2;return line(g.l,g.t,g.l,g.t+g.ph,'#b9c2cf','stroke-width=".7"')+text(14,cy,label,'class="symbol y-axis-title" text-anchor="middle" transform="rotate(-90 14 '+cy+')" aria-label="'+description+'"')}
+function boundaryLines(g,x,withMinimum){let s='',previous=-Infinity,row=0;for(const z of thresholds(withMinimum)){const xx=x(z.c);row=xx-previous<53?1-row:0;previous=xx;s+=line(xx,g.t,xx,g.t+g.ph,z.minimum?'#c57b7f':'#9daaba','stroke-dasharray="3 4" stroke-width=".8"');s+=text(xx,43+row*15,z.symbol,'class="symbol" text-anchor="middle" style="fill:'+(z.minimum?'#b84248':'#65758c')+'"')}return s}
+function nodeShape(z,xx,yy){
+ if(z.minimum)return circle(xx,yy,4.6,'#bf4147','#fff');
+ if(z.type==='transition')return '<polygon points="'+xx+','+(yy-5)+' '+(xx+5)+','+yy+' '+xx+','+(yy+5)+' '+(xx-5)+','+yy+'" fill="white" stroke="#536780" stroke-width="1.5"/>';
+ return circle(xx,yy,4.1,'white','#536780');
+}
+function nodeMarks(g,x,y,withMinimum,key){let s='';for(const z of thresholds(withMinimum)){const e=Model.equilibrium(z.c,q);s+='<g><title>'+z.symbol+': '+z.meaning+'; c = '+fmt(z.c,6)+'</title>'+nodeShape(z,x(z.c),y(key(e)))+'</g>'}return s}
+function nodeButtons(id,withMinimum){$(id).innerHTML=thresholds(withMinimum).map(z=>'<button type="button" class="node-button" data-cost="'+z.c+'" title="'+z.symbol+' = '+fmt(z.c,6)+'" aria-label="'+z.symbol+': '+z.meaning+', c = '+fmt(z.c,6)+'"><span class="node-icon '+(z.minimum?'minimum':'')+'">'+(z.minimum?'●':z.type==='transition'?'◇':'○')+'</span><span class="symbol '+(z.minimum?'minimum':'')+'">'+z.symbol+'</span> '+z.meaning+'</button>').join('')}
+function plotFinish(id,g,s){const el=$(id);el.setAttribute('viewBox','0 0 '+g.w+' '+g.h);el.innerHTML=s;Object.assign(el.dataset,{left:g.l,plotwidth:g.pw})}
+function drawWelfare(){
+ const g=geometry('welfareChart'),x=c=>g.l+g.pw*fraction(c),values=samples.flatMap(s=>state.planner?[s.d.W-q.W0,s.p.W-q.W0]:[s.d.W-q.W0]);let lo=Math.min(0,...values),hi=Math.max(0,...values),span=Math.max(hi-lo,Math.abs(q.W0)*.06);lo-=span*.14;hi+=span*.16;const y=v=>g.t+g.ph*(hi-v)/(hi-lo),e=Model.equilibrium(state.c,q);
+ let s='<defs><clipPath id="wclip"><rect x="'+g.l+'" y="'+g.t+'" width="'+g.pw+'" height="'+g.ph+'"/></clipPath></defs>'+bands(g,x);
+ const rawStep=(hi-lo)/4,power=10**Math.floor(Math.log10(rawStep)),step=[1,2,5,10].find(v=>v>=rawStep/power)*power;
+ for(let v=Math.ceil(lo/step)*step;v<=hi;v+=step){const yy=y(v);s+=line(g.l,yy,g.w-g.r,yy,'#e4e8ee','stroke-width=".7"')+text(g.l-8,yy+4,fmt(v,3),'text-anchor="end"')}
+ const label='<tspan style="fill:#2457c5">Wᵈ − W₀</tspan>'+(state.planner?'<tspan style="fill:#087d78">, Wˢᵒ − W₀</tspan>':'');
+ s+=axisX(g)+axisY(g,label,state.planner?'Consumer and planner welfare relative to the no-learning baseline':'Consumer welfare relative to the no-learning baseline')+boundaryLines(g,x,true)+line(g.l,y(0),g.w-g.r,y(0),'#8e98a8','stroke-dasharray="2 4" stroke-width="1"');
+ if(state.planner)s+='<path d="'+path(samples,x,y,p=>p.p.W-q.W0)+'" fill="none" stroke="#087d78" stroke-width="2" stroke-dasharray="7 5" clip-path="url(#wclip)"/>';
+ s+='<path d="'+path(samples,x,y,p=>p.d.W-q.W0)+'" fill="none" stroke="#2457c5" stroke-width="2.7" stroke-linejoin="round" clip-path="url(#wclip)"/>';
+ s+=line(x(state.c),g.t,x(state.c),g.t+g.ph,'#344662','opacity=".55" stroke-width=".8"')+circle(x(state.c),y(e.W-q.W0),4.5,'#2457c5','white');
+ s+=nodeMarks(g,x,y,true,z=>z.W-q.W0);plotFinish('welfareChart',g,s);
+}
+function drawBeta(){
+ const g=geometry('betaChart'),x=c=>g.l+g.pw*fraction(c),y=v=>g.t+g.ph*(1.04-v)/1.04,e=Model.equilibrium(state.c,q);
+ let s='<defs><clipPath id="bclip"><rect x="'+g.l+'" y="'+g.t+'" width="'+g.pw+'" height="'+g.ph+'"/></clipPath></defs>'+bands(g,x);
+ for(const v of [0,.5,1]){s+=line(g.l,y(v),g.w-g.r,y(v),'#e4e8ee','stroke-width=".7"');if(Math.abs(y(v)-y(q.beta0))>18)s+=text(g.l-8,y(v)+4,fmt(v,2),'text-anchor="end"')}
+ s+=axisX(g)+axisY(g,'<tspan style="fill:#1b293f">βᵈ</tspan>','Equilibrium manipulation beta d')+boundaryLines(g,x,false)+line(g.l,y(q.beta0),g.w-g.r,y(q.beta0),'#8e98a8','stroke-dasharray="2 4"');
+ s+=text(g.l-8,y(q.beta0)+4,'β<tspan baseline-shift="sub" font-size="10" font-style="normal">0</tspan>','class="symbol baseline-label" text-anchor="end" aria-label="beta zero"');
+ if(state.candidates){
+  const candidates=[{key:p=>Math.sqrt(q.b)/(q.tau*Math.sqrt(p.c)+Math.sqrt(q.b)),color:'#ad630f',dash:'7 4'},{key:p=>Math.cbrt(q.mu*Math.sqrt(p.c)),color:'#4272ce',dash:'2 4'},{key:()=>Math.sqrt(q.b),color:'#087d78',dash:'9 3 2 3'}];
+  for(const z of candidates)s+='<path d="'+path(samples,x,y,z.key)+'" fill="none" stroke="'+z.color+'" stroke-width="1.4" stroke-dasharray="'+z.dash+'" opacity=".8" clip-path="url(#bclip)"/>';
+  if(q.b>=1)s+=text(g.w-g.r-6,g.t+16,'√b ≥ 1: Both infeasible','text-anchor="end" style="fill:#087d78;font-size:12px"');
+ }
+ s+='<path d="'+path(samples,x,y,p=>p.d.beta)+'" fill="none" stroke="#1b293f" stroke-width="2.7" clip-path="url(#bclip)"/>';
+ s+=line(x(state.c),g.t,x(state.c),g.t+g.ph,'#344662','opacity=".55" stroke-width=".8"')+circle(x(state.c),y(e.beta),4.5,'#1b293f','white');
+ s+=nodeMarks(g,x,y,false,z=>z.beta);plotFinish('betaChart',g,s);
+}
+function phaseWindow(){return {hi:Math.max(state.c*1.001,2*q.b0/q.D0**2*1.8,3*q.ctheta/(3-2*q.beta0)*1.8),lo:Math.min(state.c/1.001,q.ctheta/80,.02**3/q.mu**2/3)}}
+function drawPhase(){
+ const id='phaseChart',rect=$(id).getBoundingClientRect(),w=Math.max(270,rect.width),h=rect.height,l=58,r=14,t=40,pw=w-l-r,ph=h-t-35,pd=phaseWindow(),x=b=>l+(b-.02)/1.98*pw,y=c=>t+ph*(1-fraction(c,pd));
+ let s='<defs><clipPath id="pclip"><rect x="'+l+'" y="'+t+'" width="'+pw+'" height="'+ph+'"/></clipPath></defs><rect x="'+l+'" y="'+t+'" width="'+pw+'" height="'+ph+'" fill="'+fills.n+'"/><g clip-path="url(#pclip)">';
+ const pieces=[{lo:.02,hi:Math.min(q.b0,2),reg:'f'},{lo:Math.max(q.b0,.02),hi:1,reg:'m'},{lo:1,hi:2,reg:'m'}];
+ const area=(a,b,color)=>'<path d="M'+a.map(p=>x(p[0])+','+y(clamp(p[1],pd.lo,pd.hi))).join(' L')+' L'+b.slice().reverse().map(p=>x(p[0])+','+y(clamp(p[1],pd.lo,pd.hi))).join(' L')+' Z" fill="'+color+'"/>';
+ for(const z of pieces){if(z.hi<=z.lo)continue;const top=[],bottom=[],floor=[];for(let i=0;i<=100;i++){const b=z.lo+(z.hi-z.lo)*i/100,act=Math.max(q.ctheta,b*q.b0/q.D0**2),tr=b>=1?pd.lo:b>=q.b0?(1-Math.sqrt(b))**2/q.tau**2:b**3/q.mu**2;top.push([b,act]);bottom.push([b,Math.max(tr,1e-30)]);floor.push([b,pd.lo])}s+=area(top,bottom,fills[z.reg]);if(z.hi<=1)s+=area(bottom,floor,fills.j)}
+ for(const b of[q.b0,1])s+=line(x(b),t,x(b),h-35,'#70849a','stroke-dasharray="3 5" stroke-width=".8"');
+ s+=circle(x(state.b),y(state.c),5.5,'#1b293f','white')+'</g>';
+ for(let i=0;i<=3;i++){const c=cAt(i/3,pd);s+=text(l-8,y(c)+4,fmt(c,3),'text-anchor="end"')}
+ s+='<g class="x-axis">'+line(l,t+ph,w-r,t+ph,'#b9c2cf','stroke-width=".7"')+text(w-r,h-12,'b','class="symbol" text-anchor="end"')+'</g>';
+ s+=text(x(q.b0),28,'<tspan>β</tspan><tspan dy="4" font-size="11" font-style="normal" font-family="Cambria Math, Times New Roman, serif">0</tspan><tspan dx="-5.5" dy="-11" font-size="11" font-style="normal">2</tspan><tspan dy="7" font-style="normal"> = '+fmt(q.b0,3)+'</tspan>','class="symbol" text-anchor="middle" aria-label="beta zero squared = '+fmt(q.b0,3)+'"')+text(x(1),28,'b = 1','class="symbol" text-anchor="middle"')+text(l,11,'c','class="symbol"');
+ $(id).setAttribute('viewBox','0 0 '+w+' '+h);$(id).innerHTML=s;Object.assign($(id).dataset,{left:l,plotwidth:pw,top:t,plotheight:ph});
+}
+function renderControls(){
+ for(const key of['b','tau','mu']){if(document.activeElement!==$(key+'Number'))$(key+'Number').value=fmt(state[key],5);$(key+'Slider').value=state[key]}
+ if(document.activeElement!==$('cNumber'))$('cNumber').value=fmt(state.c,5);
+ $('cSlider').value=clamp(fraction(state.c)*1000,0,1000);$('cSlider').setAttribute('aria-valuetext','c = '+fmt(state.c));
+ $('showPlanner').checked=state.planner;$('showCandidates').checked=state.candidates;$('candidateLegend').hidden=!state.candidates;
+ nodeButtons('welfareNodes',true);nodeButtons('betaNodes',false);
+ syncPlotControls();
+}
+function syncPlotControls(){
+ for(const group of plotClones)for(const target of group.querySelectorAll('[data-source-control]')){
+  const source=$(target.dataset.sourceControl);
+  if(target.tagName==='INPUT'){if(target.type!=='number'||document.activeElement!==target)target.value=source.value}
+  else {target.innerHTML=source.innerHTML;if(source.hasAttribute('aria-label'))target.setAttribute('aria-label',source.getAttribute('aria-label'));if(source.title)target.title=source.title}
+ }
+}
+function setupPlotControls(){
+ const original=document.querySelector('.controls');original.classList.add('plot-controls');original.dataset.plotControls='welfare';original.setAttribute('aria-label','Welfare parameters');
+ original.querySelector('label[for="bNumber"]').innerHTML='<span class="math">b</span>';original.querySelector('label[for="bNumber"]').title='Preference productivity';
+ original.querySelector('label[for="cNumber"]').innerHTML='<span class="math">c</span>';original.querySelector('label[for="cNumber"]').title='Learning cost';
+ $('play').textContent='▶';$('play').title='Play c increase';$('play').setAttribute('aria-label','Play c increase');$('resetC').textContent='↺';$('resetC').title='Reset c to low cost';$('resetC').setAttribute('aria-label','Reset c to low cost');
+ document.querySelector('.figure').prepend(original);
+ for(const [scope,container]of[['beta',document.querySelectorAll('.figure')[1]],['phase',document.querySelector('.phase-figure')]]){
+  const clone=original.cloneNode(true);clone.dataset.plotControls=scope;clone.setAttribute('aria-label',scope==='beta'?'Manipulation parameters':'Equilibrium region parameters');
+  for(const el of clone.querySelectorAll('[id]')){const sourceId=el.id;el.dataset.sourceControl=sourceId;el.id=sourceId+'_'+scope;if(el.tagName==='INPUT'){const eventName=el.type==='range'?'input':'change';el.addEventListener(eventName,()=>{const source=$(sourceId);source.value=el.value;source.dispatchEvent(new Event(eventName,{bubbles:true}));el.value=source.value;syncPlotControls()})}else if(el.tagName==='BUTTON')el.addEventListener('click',()=>{$(sourceId).click();syncPlotControls()})}
+  for(const label of clone.querySelectorAll('label[for]'))label.htmlFor=label.htmlFor+'_'+scope;
+  container.prepend(clone);plotClones.push(clone);
+ }
+ syncPlotControls();
+}
+function render(){if(dirty){regenerate();dirty=false}renderControls();drawWelfare();drawBeta();drawPhase()}
+for(const[key,min,max]of[['b',.02,2],['tau',.2,3],['mu',.02,2]]){
+ $(key+'Slider').addEventListener('input',ev=>setParameters({[key]:Number(ev.target.value)}));
+ $(key+'Number').addEventListener('change',ev=>{const v=Number(ev.target.value);if(ev.target.value===''||!Number.isFinite(v)||v<min||v>max){$('inputError').textContent=key+': '+min+'–'+max;ev.target.value=fmt(state[key],5);return}setParameters({[key]:v})});
+}
+$('cSlider').addEventListener('input',ev=>{stopPlay();state.c=cAt(Number(ev.target.value)/1000);requestRender()});
+$('cNumber').addEventListener('change',ev=>{const c=Number(ev.target.value);if(!Number.isFinite(c)||c<1e-12||c>1e6){$('inputError').textContent='c: 10⁻¹²–10⁶';ev.target.value=fmt(state.c,5);return}setParameters({c})});
+$('exampleSelect').addEventListener('change',ev=>{if(!ev.target.value)return;const b=ev.target.value==='knife'?.25:Number(ev.target.value),z=Model.context(b,1,.25);setParameters({b,tau:1,mu:.25,c:z.star?Math.sqrt(z.activation*z.star):z.activation*.65});ev.target.value=''});
+$('showPlanner').addEventListener('change',ev=>{state.planner=ev.target.checked;requestRender()});
+$('showCandidates').addEventListener('change',ev=>{state.candidates=ev.target.checked;requestRender()});
+for(const id of['welfareNodes','betaNodes'])$(id).addEventListener('click',ev=>{const button=ev.target.closest('[data-cost]');if(button)setParameters({c:Number(button.dataset.cost)})});
+$('resetC').addEventListener('click',()=>setParameters({c:windowFor(q).lo}));
+$('play').addEventListener('click',()=>{if(playing){stopPlay();return}playFraction=fraction(state.c);if(playFraction>.985){playFraction=0;state.c=domain.lo}playing=true;lastTime=0;$('play').textContent='Ⅱ';$('play').title='Pause';$('play').setAttribute('aria-label','Pause');syncPlotControls();requestAnimationFrame(animate)});
+function animate(t){if(!playing)return;if(!lastTime)lastTime=t;playFraction=Math.min(1,playFraction+(t-lastTime)/16000);lastTime=t;state.c=cAt(playFraction);requestRender();if(playFraction>=1)stopPlay();else requestAnimationFrame(animate)}
+function tooltip(id,ev,content){const tip=$(id),rect=tip.parentElement.getBoundingClientRect();tip.hidden=false;tip.innerHTML=content;tip.style.left=clamp(ev.clientX-rect.left+10,0,Math.max(0,rect.width-tip.offsetWidth))+'px';tip.style.top=clamp(ev.clientY-rect.top+15,0,rect.height-tip.offsetHeight)+'px'}
+for(const id of['welfareChart','betaChart']){
+ const el=$(id),tip=id==='welfareChart'?'welfareTip':'betaTip';let dragging=false;
+ function costAtPointer(ev){const rect=el.getBoundingClientRect();return cAt(clamp((ev.clientX-rect.left-Number(el.dataset.left))/Number(el.dataset.plotwidth),0,1))}
+ function move(ev){state.c=costAtPointer(ev);stopPlay();requestRender()}
+ el.addEventListener('pointerdown',ev=>{dragging=true;el.setPointerCapture(ev.pointerId);const c=costAtPointer(ev),u=fraction(c),z=thresholds(id==='welfareChart').find(z=>Math.abs(fraction(z.c)-u)*Number(el.dataset.plotwidth)<8);if(z){state.c=z.c;stopPlay();requestRender()}else move(ev)});
+ el.addEventListener('pointermove',ev=>{if(dragging)move(ev);const c=costAtPointer(ev),e=Model.equilibrium(c,q),z=thresholds(id==='welfareChart').find(z=>Math.abs(fraction(z.c)-fraction(c))*Number(el.dataset.plotwidth)<9);tooltip(tip,ev,z?'<strong>'+z.symbol+' · '+z.meaning+'</strong><br>c = '+fmt(z.c,6):'c = '+fmt(c)+' · '+names[e.regime]+'<br>'+(id==='welfareChart'?'Wᵈ − W₀ = '+fmt(e.W-q.W0):'βᵈ = '+fmt(e.beta)))});
+ el.addEventListener('pointerup',()=>dragging=false);el.addEventListener('pointercancel',()=>dragging=false);el.addEventListener('pointerleave',()=>$(tip).hidden=true);
+ el.addEventListener('keydown',ev=>{if(!['ArrowLeft','ArrowRight'].includes(ev.key))return;ev.preventDefault();stopPlay();state.c=cAt(clamp(fraction(state.c)+(ev.key==='ArrowRight'?.01:-.01),0,1));requestRender()});
+}
+{
+ const el=$('phaseChart');let dragging=false,dragDomain;
+ function point(ev,d){const r=el.getBoundingClientRect(),u=clamp((ev.clientX-r.left-Number(el.dataset.left))/Number(el.dataset.plotwidth),0,1),v=clamp((ev.clientY-r.top-Number(el.dataset.top))/Number(el.dataset.plotheight),0,1);return {b:.02+1.98*u,c:cAt(1-v,d)}}
+ el.addEventListener('pointerdown',ev=>{dragging=true;dragDomain=phaseWindow();el.setPointerCapture(ev.pointerId);setParameters(point(ev,dragDomain))});
+ el.addEventListener('pointermove',ev=>{const p=point(ev,dragging?dragDomain:phaseWindow());if(dragging)setParameters(p);const z=Model.context(p.b,state.tau,state.mu),e=Model.equilibrium(p.c,z);tooltip('phaseTip',ev,names[e.regime]+'<br>b = '+fmt(p.b)+' · c = '+fmt(p.c))});
+ el.addEventListener('pointerup',()=>dragging=false);el.addEventListener('pointercancel',()=>dragging=false);el.addEventListener('pointerleave',()=>$('phaseTip').hidden=true);
+ el.addEventListener('keydown',ev=>{if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(ev.key))return;ev.preventDefault();setParameters({b:clamp(state.b+(ev.key==='ArrowRight'?.01:ev.key==='ArrowLeft'?-.01:0),.02,2),c:clamp(state.c*(ev.key==='ArrowUp'?1.05:ev.key==='ArrowDown'?1/1.05:1),1e-12,1e6)})});
+}
+let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>requestRender(),80)});
+setupPlotControls();
+window.WelfareExplorer={Model,state,get context(){return q},setParameters};
+if(document.modelContext?.registerTool){try{const lifecycle=new AbortController();window.addEventListener('pagehide',()=>lifecycle.abort(),{once:true});Promise.resolve(document.modelContext.registerTool({name:'configure_welfare_parameters',title:'调整福利比较静态参数',description:'调整网页中的 b、c、tau、mu 并返回分散均衡及规划者福利。',inputSchema:{type:'object',properties:{b:{type:'number',minimum:.02,maximum:2},c:{type:'number',minimum:1e-12,maximum:1e6},tau:{type:'number',minimum:.2,maximum:3},mu:{type:'number',minimum:.02,maximum:2}},additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},async execute(input){if(!input||typeof input!=='object'||Array.isArray(input))throw new Error('需要参数对象');const ranges={b:[.02,2],c:[1e-12,1e6],tau:[.2,3],mu:[.02,2]};for(const[k,v]of Object.entries(input)){if(!ranges[k]||!Number.isFinite(v)||v<ranges[k][0]||v>ranges[k][1])throw new Error('参数超出允许范围：'+k)}setParameters(input);await new Promise(requestAnimationFrame);const z=Model.context(state.b,state.tau,state.mu),e=Model.equilibrium(state.c,z),p=Model.planner(state.c,z);return {parameters:{...state},regime:names[e.regime],beta:e.beta,Ktheta:e.kt,Kmu:e.km,W:e.W,Wso:p.W,W0:z.W0}}},{signal:lifecycle.signal})).catch(()=>{})}catch(_){}}
+
+render();
+</script>
+</body>
+</html>
