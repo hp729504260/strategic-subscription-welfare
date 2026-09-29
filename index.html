@@ -8,7 +8,8 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232457c5'/%3E%3Cpath d='M5 12C12 26 18 24 27 7' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E">
 <!-- Model source: referee/v3/draft/draft_v2_no_boxes.pdf (2026-08-22),
      sections 1.4–1.8; Strategic_Subscription (6).pdf (2026-09-20), slides 13–22.
-     Baseline parameters follow the paper's original plotting script. -->
+     Baseline parameters follow the paper's original plotting script.
+     Notation: Strategic_Subscription (7).pdf (2026-09-29), slides 13–21. -->
 <style>
 :root{--ink:#1b293f;--muted:#687386;--border:#e2e7ee;--blue:#2457c5;--green:#087d78;--red:#bf4147;--n:#eff1f5;--m:#fff0d9;--f:#e3ecfc;--j:#e0f2ec}
 *{box-sizing:border-box}body{margin:0;background:#fff;color:var(--ink);font:16px/1.5 "Segoe UI","Microsoft YaHei",sans-serif}button,input,select{font:inherit}button,summary,select{cursor:pointer}button,input,select{touch-action:manipulation}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,svg:focus-visible{outline:3px solid #8daef0;outline-offset:3px}[hidden]{display:none!important}
@@ -108,7 +109,7 @@ function geometry(id){const r=$(id).getBoundingClientRect(),w=Math.max(270,r.wid
 function thresholds(withMinimum=false){
  const items=[{c:q.activation,symbol:q.group==='knife'?'c⁰':q.group==='low'?'cθ⁰':'cμ⁰',type:'activation',meaning:q.group==='knife'?'Both cutoff':'Learning cutoff'}];
  if(q.transition!==null&&!near(q.transition,q.activation))items.push({c:q.transition,symbol:q.group==='middle'?'cᴹ':'cᶠ',type:'transition',meaning:'Both cutoff'});
- if(withMinimum&&q.star){const same=items.find(v=>near(v.c,q.star));if(same){same.symbol+=' = c*';same.minimum=true;same.meaning='Both cutoff / Minimum'}else items.push({c:q.star,symbol:q.group==='high'?'cᵂ':'c*',type:'minimum',minimum:true,meaning:'Welfare minimum'})}
+ if(withMinimum&&q.star){const same=items.find(v=>near(v.c,q.star));if(same){if(near(q.star,q.cw))same.symbol+=' = ĉ';same.minimum=true;same.meaning='Both cutoff / Minimum'}else items.push({c:q.star,symbol:'ĉ',type:'minimum',minimum:true,meaning:'Welfare minimum'})}
  return items.sort((a,b)=>a.c-b.c);
 }
 function bands(g,x){
@@ -136,7 +137,7 @@ function drawWelfare(){
  let s='<defs><clipPath id="wclip"><rect x="'+g.l+'" y="'+g.t+'" width="'+g.pw+'" height="'+g.ph+'"/></clipPath></defs>'+bands(g,x);
  const rawStep=(hi-lo)/4,power=10**Math.floor(Math.log10(rawStep)),step=[1,2,5,10].find(v=>v>=rawStep/power)*power;
  for(let v=Math.ceil(lo/step)*step;v<=hi;v+=step){const yy=y(v);s+=line(g.l,yy,g.w-g.r,yy,'#e4e8ee','stroke-width=".7"')+text(g.l-8,yy+4,fmt(v,3),'text-anchor="end"')}
- const label='<tspan style="fill:#2457c5">Wᵈ − W₀</tspan>'+(state.planner?'<tspan style="fill:#087d78">, Wˢᵒ − W₀</tspan>':'');
+ const label='<tspan style="fill:#2457c5">W<tspan baseline-shift="super" font-size="10" font-style="normal">∗</tspan> − W₀</tspan>'+(state.planner?'<tspan style="fill:#087d78">, W<tspan baseline-shift="super" font-size="10" font-style="normal">FB</tspan> − W₀</tspan>':'');
  s+=axisX(g)+axisY(g,label,state.planner?'Consumer and planner welfare relative to the no-learning baseline':'Consumer welfare relative to the no-learning baseline')+boundaryLines(g,x,true)+line(g.l,y(0),g.w-g.r,y(0),'#8e98a8','stroke-dasharray="2 4" stroke-width="1"');
  if(state.planner)s+='<path d="'+path(samples,x,y,p=>p.p.W-q.W0)+'" fill="none" stroke="#087d78" stroke-width="2" stroke-dasharray="7 5" clip-path="url(#wclip)"/>';
  s+='<path d="'+path(samples,x,y,p=>p.d.W-q.W0)+'" fill="none" stroke="#2457c5" stroke-width="2.7" stroke-linejoin="round" clip-path="url(#wclip)"/>';
@@ -147,7 +148,7 @@ function drawBeta(){
  const g=geometry('betaChart'),x=c=>g.l+g.pw*fraction(c),y=v=>g.t+g.ph*(1.04-v)/1.04,e=Model.equilibrium(state.c,q);
  let s='<defs><clipPath id="bclip"><rect x="'+g.l+'" y="'+g.t+'" width="'+g.pw+'" height="'+g.ph+'"/></clipPath></defs>'+bands(g,x);
  for(const v of [0,.5,1]){s+=line(g.l,y(v),g.w-g.r,y(v),'#e4e8ee','stroke-width=".7"');if(Math.abs(y(v)-y(q.beta0))>18)s+=text(g.l-8,y(v)+4,fmt(v,2),'text-anchor="end"')}
- s+=axisX(g)+axisY(g,'<tspan style="fill:#1b293f">βᵈ</tspan>','Equilibrium manipulation beta d')+boundaryLines(g,x,false)+line(g.l,y(q.beta0),g.w-g.r,y(q.beta0),'#8e98a8','stroke-dasharray="2 4"');
+ s+=axisX(g)+axisY(g,'<tspan style="fill:#1b293f">β<tspan baseline-shift="super" font-size="10" font-style="normal">∗</tspan></tspan>','Equilibrium manipulation beta star')+boundaryLines(g,x,false)+line(g.l,y(q.beta0),g.w-g.r,y(q.beta0),'#8e98a8','stroke-dasharray="2 4"');
  s+=text(g.l-8,y(q.beta0)+4,'β<tspan baseline-shift="sub" font-size="10" font-style="normal">0</tspan>','class="symbol baseline-label" text-anchor="end" aria-label="beta zero"');
  if(state.candidates){
   const candidates=[{key:p=>Math.sqrt(q.b)/(q.tau*Math.sqrt(p.c)+Math.sqrt(q.b)),color:'#ad630f',dash:'7 4'},{key:p=>Math.cbrt(q.mu*Math.sqrt(p.c)),color:'#4272ce',dash:'2 4'},{key:()=>Math.sqrt(q.b),color:'#087d78',dash:'9 3 2 3'}];
@@ -221,7 +222,7 @@ for(const id of['welfareChart','betaChart']){
  function costAtPointer(ev){const rect=el.getBoundingClientRect();return cAt(clamp((ev.clientX-rect.left-Number(el.dataset.left))/Number(el.dataset.plotwidth),0,1))}
  function move(ev){state.c=costAtPointer(ev);stopPlay();requestRender()}
  el.addEventListener('pointerdown',ev=>{dragging=true;el.setPointerCapture(ev.pointerId);const c=costAtPointer(ev),u=fraction(c),z=thresholds(id==='welfareChart').find(z=>Math.abs(fraction(z.c)-u)*Number(el.dataset.plotwidth)<8);if(z){state.c=z.c;stopPlay();requestRender()}else move(ev)});
- el.addEventListener('pointermove',ev=>{if(dragging)move(ev);const c=costAtPointer(ev),e=Model.equilibrium(c,q),z=thresholds(id==='welfareChart').find(z=>Math.abs(fraction(z.c)-fraction(c))*Number(el.dataset.plotwidth)<9);tooltip(tip,ev,z?'<strong>'+z.symbol+' · '+z.meaning+'</strong><br>c = '+fmt(z.c,6):'c = '+fmt(c)+' · '+names[e.regime]+'<br>'+(id==='welfareChart'?'Wᵈ − W₀ = '+fmt(e.W-q.W0):'βᵈ = '+fmt(e.beta)))});
+ el.addEventListener('pointermove',ev=>{if(dragging)move(ev);const c=costAtPointer(ev),e=Model.equilibrium(c,q),z=thresholds(id==='welfareChart').find(z=>Math.abs(fraction(z.c)-fraction(c))*Number(el.dataset.plotwidth)<9);tooltip(tip,ev,z?'<strong>'+z.symbol+' · '+z.meaning+'</strong><br>c = '+fmt(z.c,6):'c = '+fmt(c)+' · '+names[e.regime]+'<br>'+(id==='welfareChart'?'W<sup>∗</sup> − W₀ = '+fmt(e.W-q.W0):'β<sup>∗</sup> = '+fmt(e.beta)))});
  el.addEventListener('pointerup',()=>dragging=false);el.addEventListener('pointercancel',()=>dragging=false);el.addEventListener('pointerleave',()=>$(tip).hidden=true);
  el.addEventListener('keydown',ev=>{if(!['ArrowLeft','ArrowRight'].includes(ev.key))return;ev.preventDefault();stopPlay();state.c=cAt(clamp(fraction(state.c)+(ev.key==='ArrowRight'?.01:-.01),0,1));requestRender()});
 }
